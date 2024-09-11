@@ -3,17 +3,39 @@ export class Component {
   constructor(html) {
     const template = document.createElement("template");
     template.innerHTML = html
-      .replaceAll("{", "<span data-state>")
+      .replaceAll("{", "<span data-prop>")
       .replaceAll("}", "</span>");
     this.frag = template.content;
 
     traverseChildren(this.frag, (elem) => {
-      if (elem.hasAttribute("data-state")) {
-        const stateName = elem.textContent;
-        this[stateName] = new State();
-        useEffect(() => {
-          elem.textContent = this[stateName].value;
-        }, [this[stateName]]);
+      if (elem.hasAttribute("data-prop")) {
+        const propName = elem.textContent;
+
+        Object.defineProperty(this, propName, {
+          configurable: true,
+          set: (v) => {
+            this["#" + propName] = v;
+
+            if (v instanceof State) {
+              elem.textContent = v.value;
+              v.addEffect(() => {
+                elem.textContent = v.value;
+              });
+            } else {
+              elem.textContent = v;
+            }
+
+            Object.defineProperty(this, propName, {
+              set: () => {
+                throw new Error(`"${propName}" cannot be reassigned`);
+              },
+            });
+          },
+
+          get: () => {
+            return this["#" + propName];
+          },
+        });
       }
     });
   }
