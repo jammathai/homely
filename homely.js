@@ -37,6 +37,9 @@ export class Component {
           },
         });
       }
+
+      if (elem.hasAttribute("data-name"))
+        this[elem.getAttribute("data-name")] = elem;
     });
   }
 
