@@ -17,12 +17,12 @@ export class Component {
             this["#" + propName] = v;
 
             if (v instanceof State) {
-              elem.textContent = v.value;
+              setContent(elem, v.value);
               v.addEffect(() => {
-                elem.textContent = v.value;
+                setContent(elem, v.value);
               });
             } else {
-              elem.textContent = v;
+              setContent(elem, v);
             }
 
             Object.defineProperty(this, propName, {
@@ -75,6 +75,16 @@ export class State {
 /** @param {() => void} effect @param {State[]} deps */
 export function useEffect(effect, deps) {
   for (const dep of deps) dep.addEffect(effect);
+}
+
+/** @param {HTMLElement} */
+function setContent(elem, value) {
+  if (value instanceof Component) {
+    elem.innerHTML = "";
+    value.appendTo(elem);
+  } else {
+    elem.textContent = value;
+  }
 }
 
 /** @param {Node} node @param {(elem: HTMLElement) => void} callback */
