@@ -77,7 +77,7 @@ export function useEffect(effect, deps) {
   for (const dep of deps) dep.addEffect(effect);
 }
 
-/** @param {HTMLElement} */
+/** @param {HTMLElement} elem */
 function setContent(elem, value) {
   if (value instanceof Component) {
     elem.innerHTML = "";
