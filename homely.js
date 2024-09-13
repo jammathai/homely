@@ -1,5 +1,5 @@
 export class Component {
-  /** @type {DocumentFragment} */
+  /** @type {DocumentFragment | undefined} */
   #frag;
 
   /** @param {string} html @param {Node} parent */
