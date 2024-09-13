@@ -1,13 +1,16 @@
 export class Component {
+  /** @type {DocumentFragment} */
+  #frag;
+
   /** @param {string} html @param {Node} parent */
   constructor(html) {
     const template = document.createElement("template");
     template.innerHTML = html
       .replaceAll("{", "<span data-prop>")
       .replaceAll("}", "</span>");
-    this.frag = template.content;
+    this.#frag = template.content;
 
-    traverseChildren(this.frag, (elem) => {
+    traverseChildren(this.#frag, (elem) => {
       if (elem.hasAttribute("data-prop")) {
         const propName = elem.textContent;
 
@@ -45,8 +48,12 @@ export class Component {
 
   /** @param {HTMLElement} elem */
   appendTo(elem) {
-    elem.append(this.frag);
-    delete this.frag;
+    if (this.#frag) {
+      elem.append(this.#frag);
+      this.#frag = undefined;
+    } else {
+      throw new Error("appendTo() can only be called once per Component");
+    }
   }
 }
 
@@ -55,7 +62,7 @@ export class State {
 
   constructor(value) {
     this.#value = value;
-    /** @type (() => void)[] */
+    /** @type {(() => void)[]} */
     this.effects = [];
   }
 
@@ -81,12 +88,19 @@ export function useEffect(effect, deps) {
 }
 
 /** @param {HTMLElement} elem */
-function setContent(elem, value) {
-  if (value instanceof Component) {
-    elem.innerHTML = "";
-    value.appendTo(elem);
+export function setContent(elem, content) {
+  elem.innerHTML = "";
+  if (content instanceof Array)
+    for (const item of content) appendContent(elem, item);
+  else appendContent(elem, content);
+}
+
+/** @param {HTMLElement} elem */
+function appendContent(elem, content) {
+  if (content.appendTo) {
+    content.appendTo(elem);
   } else {
-    elem.textContent = value;
+    elem.append(content);
   }
 }
 
