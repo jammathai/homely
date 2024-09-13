@@ -97,7 +97,7 @@ export function setContent(elem, content) {
 
 /** @param {HTMLElement} elem */
 function appendContent(elem, content) {
-  if (content.appendTo) {
+  if (content instanceof Component) {
     content.appendTo(elem);
   } else {
     elem.append(content);
