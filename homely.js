@@ -11,6 +11,11 @@ export class Component {
     this.#frag = template.content;
 
     traverseChildren(this.#frag, (elem) => {
+      if (elem.childNodes.length === 1 && elem.firstElementChild) {
+        elem.setAttribute("data-prop", "");
+        elem.textContent = elem.firstElementChild.textContent;
+      }
+
       if (elem.hasAttribute("data-prop")) {
         const propName = elem.textContent;
 
