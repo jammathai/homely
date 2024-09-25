@@ -1,0 +1,16 @@
+* {
+  font-family: system-ui;
+  font-size: 1rem;
+}
+
+button,
+input {
+  background-color: #f0f0f0;
+  border: 1px solid #d0d0d0;
+  border-radius: 4px;
+}
+
+button:hover,
+input:hover {
+  border: 1px solid #b0b0b0;
+}
