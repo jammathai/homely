@@ -92,6 +92,10 @@ export function wrap(object) {
   });
 }
 
+export function unwrap(state) {
+  return Object.assign({}, state);
+}
+
 export function addEffect(effect, deps) {
   if (typeof effect !== "function") {
     error(TypeError, "effect is not a function");
